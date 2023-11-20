@@ -60,11 +60,29 @@ make_box draw_player_2_paddle(
 	.box(player_2_paddle)
 );
 
+wire [9:0] ball_width = 7;
+wire [9:0] ball_height = 7;
+wire [9:0] ball_x_location = 300;
+wire [9:0] ball_y_location = 220;
+reg ball;
+
+make_box draw_ball(
+	.X_pix(X_pix),
+	.Y_pix(Y_pix),
+	.box_width(ball_width),
+	.box_height(ball_height),
+	.box_x_location(ball_x_location),
+	.box_y_location(ball_y_location),
+	.pixel_clk(CLOCK_50),
+	.box(ball)
+);
+
 
 always @(posedge CLOCK_50)
 	begin
 		if(player_1_paddle) pixel_color <= 12'b1111_1111_1111;
 		else if(player_2_paddle) pixel_color <= 12'b1111_1111_1111;
+		else if (ball) pixel_color <= 12'b1111_1111_1111;
 		else pixel_color <= 12'b0000_0000_0000;
 	end
 	
