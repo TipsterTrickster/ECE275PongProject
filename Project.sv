@@ -52,7 +52,7 @@ make_box draw_player_1_paddle(
 
 wire [9:0] player_2_paddle_width = 10;
 wire [9:0] player_2_paddle_height = 50;
-logic [9:0] player_2_paddle_x_location_logic = 0;
+logic [9:0] player_2_paddle_x_location_logic = 630;
 logic [9:0] player_2_paddle_y_location_logic = 220;
 
 wire [9:0] player_2_paddle_x_location;
@@ -75,9 +75,9 @@ make_box draw_player_2_paddle(
 	.box(player_2_paddle)
 );
 
-wire [9:0] ball_width = 10;
-wire [9:0] ball_height = 50;
-logic [9:0] ball_x_location_logic = 0;
+wire [9:0] ball_width = 7;
+wire [9:0] ball_height = 7;
+logic [9:0] ball_x_location_logic = 300;
 logic [9:0] ball_y_location_logic = 220;
 
 wire [9:0] ball_x_location;
