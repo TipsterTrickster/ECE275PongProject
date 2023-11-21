@@ -1,12 +1,14 @@
 `include "./DE0_VGA.sv"
 `include "./modules/make_box.sv"
 
-module Project(CLOCK_50, PushButton,
+module Project(CLOCK_50, PushButton, SW,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
 
 input	logic	CLOCK_50;
 
 input logic [2:0] PushButton;
+input logic [9:0] SW;
+
 
 output	logic	[3:0]		VGA_R;		//Output Red
 output	logic	[3:0]		VGA_G;		//Output Green
@@ -27,15 +29,16 @@ logic			[9:0]		pixel_cnt;		//How many pixels have been output.
 logic			[11:0]		pixel_color;	//12 Bits representing color of pixel, 4 bits for R, G, and B
 										//4 bits for Blue are in most significant position, Red in least
 // general variables
-logic [9:0] ball_xv = 3;
-logic [9:0] ball_yv = 1;
+logic [9:0] ball_xv = 0;
+logic [9:0] ball_yv = 0;
 logic [9:0] player_1_paddle_yv = 3;
 logic [9:0] player_2_paddle_yv = 3;
+logic reset = 1;
 										
 // Draw the player one paddle
 wire [9:0] player_1_paddle_width = 10;
 wire [9:0] player_1_paddle_height = 50;
-logic [9:0] player_1_paddle_x_location_logic = 0;
+logic [9:0] player_1_paddle_x_location_logic = 20;
 logic [9:0] player_1_paddle_y_location_logic = 220;
 
 wire [9:0] player_1_paddle_x_location;
@@ -59,7 +62,7 @@ make_box draw_player_1_paddle(
 
 wire [9:0] player_2_paddle_width = 10;
 wire [9:0] player_2_paddle_height = 50;
-logic [9:0] player_2_paddle_x_location_logic = 630;
+logic [9:0] player_2_paddle_x_location_logic = 610;
 logic [9:0] player_2_paddle_y_location_logic = 220;
 
 wire [9:0] player_2_paddle_x_location;
@@ -108,34 +111,62 @@ make_box draw_ball(
 );
 
 logic [19:0] i = 0;
+logic [14:0] j = 0;
 
 always_ff @(posedge CLOCK_50)
 	begin
-		if(player_1_paddle) pixel_color <= 12'b1111_1111_1111;
-		else if(player_2_paddle) pixel_color <= 12'b1111_1111_1111;
+		if(player_1_paddle) pixel_color <= 12'b0000_0000_1111;
+		else if(player_2_paddle) pixel_color <= 12'b0000_0000_0000;
 		else if (ball) pixel_color <= 12'b1111_1111_1111;
-		else pixel_color <= 12'b0000_0000_0000;
+		else pixel_color <= 12'b1111_0000_0000;
 		
 		i = i + 1;
 		
 		if (i == 307200) begin
-			if (ball_y_location > 480 || ball_y_location < 0) begin
-				ball_yv = -ball_yv;
+			if (reset == 1) begin
+				ball_y_location_logic = 240;
+				ball_x_location_logic = 320;
+				ball_xv = 0;
+				ball_yv = 0;
+				if(!PushButton[2] && j > 500) begin
+					j = 0;
+					reset = 0;
+					ball_xv = 3;
+					ball_yv = -1;
+				end
+				else if(!PushButton[0] && j > 500) begin
+					reset = 0;
+					ball_xv = -3;
+					ball_yv = -1;
+				end
 			end
-			if (ball_x_location > 640 || ball_x_location < 0) begin
-				ball_xv = -ball_xv;
-			end
-			
-			if (PushButton[2]) player_1_paddle_y_location_logic <= player_1_paddle_y_location_logic - player_1_paddle_yv;
-			else player_1_paddle_y_location_logic <= player_1_paddle_y_location_logic + player_1_paddle_yv;
 			
 			
-			if (PushButton[0]) player_2_paddle_y_location_logic <= player_2_paddle_y_location_logic - player_2_paddle_yv;
-			else player_2_paddle_y_location_logic <= player_2_paddle_y_location_logic + player_2_paddle_yv;
 			
-			i <= 0;	
-			ball_y_location_logic <= ball_y_location_logic + ball_yv;
-			ball_x_location_logic <= ball_x_location_logic + ball_xv;
+			if (ball_x_location + ball_width > 630 || ball_x_location < 10) reset = 1;
+			else if (ball_y_location < player_1_paddle_y_location + player_1_paddle_height &&
+						ball_y_location + ball_height > player_1_paddle_y_location && 
+						(ball_x_location + ball_width < 30)) ball_xv = -ball_xv;
+			else if (ball_y_location < player_2_paddle_y_location + player_2_paddle_height &&
+						ball_y_location + ball_height > player_2_paddle_y_location && 
+						(ball_x_location + ball_width > 610)) ball_xv = -ball_xv;
+			
+
+			if (ball_y_location > 480 || ball_y_location < 0) ball_yv = -ball_yv;
+			
+			if (!PushButton[2] && player_1_paddle_y_location + player_1_paddle_height < 479) player_1_paddle_y_location_logic = player_1_paddle_y_location_logic + player_1_paddle_yv;
+			else if (player_1_paddle_y_location > 1) player_1_paddle_y_location_logic = player_1_paddle_y_location_logic - player_1_paddle_yv;
+			
+			if (!PushButton[0] && player_2_paddle_y_location + player_2_paddle_height < 479) player_2_paddle_y_location_logic = player_2_paddle_y_location_logic + player_2_paddle_yv;
+			else if (player_2_paddle_y_location > 1) player_2_paddle_y_location_logic = player_2_paddle_y_location_logic - player_2_paddle_yv;
+			
+			
+			
+			ball_y_location_logic = ball_y_location_logic + ball_yv;
+			ball_x_location_logic = ball_x_location_logic + ball_xv;
+			
+			i = 0;
+			j = j + 1;
 		end
 	end
 	
