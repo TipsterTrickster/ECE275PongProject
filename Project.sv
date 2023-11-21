@@ -1,5 +1,8 @@
 `include "./DE0_VGA.sv"
 `include "./modules/make_box.sv"
+`include "./modules/BCD_Display.sv"
+`include "./modules/binaryToBCD.sv"
+
 
 module Project(CLOCK_50, PushButton, SW,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
@@ -112,6 +115,7 @@ make_box draw_ball(
 
 logic [19:0] i = 0;
 logic [14:0] j = 0;
+
 
 always_ff @(posedge CLOCK_50)
 	begin
