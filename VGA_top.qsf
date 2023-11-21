@@ -13,6 +13,9 @@ set_location_assignment PIN_H17 -to VGA_R[1]
 set_location_assignment PIN_H20 -to VGA_R[2]
 set_location_assignment PIN_H21 -to VGA_R[3]
 set_location_assignment PIN_G21 -to CLOCK_50
+set_location_assignment PIN_H2 -to PushButton[0]
+set_location_assignment PIN_G3 -to PushButton[1]
+set_location_assignment PIN_F1 -to PushButton[2]
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
