@@ -25,7 +25,7 @@ logic			[9:0]		pixel_cnt;		//How many pixels have been output.
 logic			[11:0]		pixel_color;	//12 Bits representing color of pixel, 4 bits for R, G, and B
 										//4 bits for Blue are in most significant position, Red in least
 // general variables
-logic [9:0] ball_xv = 1;
+logic [9:0] ball_xv = 3;
 logic [9:0] ball_yv = 1;
 
 										
@@ -119,8 +119,12 @@ always_ff @(posedge CLOCK_50)
 			if (ball_y_location > 480 || ball_y_location < 0) begin
 				ball_yv = -ball_yv;
 			end
+			if (ball_x_location > 640 || ball_x_location < 0) begin
+				ball_xv = -ball_xv;
+			end
 			i <= 0;
 			ball_y_location_logic = ball_y_location_logic + ball_yv;
+			ball_x_location_logic = ball_x_location_logic + ball_xv;
 		end
 	end
 	
