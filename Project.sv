@@ -1,10 +1,12 @@
 `include "./DE0_VGA.sv"
 `include "./modules/make_box.sv"
 
-module Project(CLOCK_50, 
+module Project(CLOCK_50, PushButton,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
 
-input	logic			CLOCK_50;
+input	logic	CLOCK_50;
+
+input logic [2:0] PushButton;
 
 output	logic	[3:0]		VGA_R;		//Output Red
 output	logic	[3:0]		VGA_G;		//Output Green
@@ -27,7 +29,8 @@ logic			[11:0]		pixel_color;	//12 Bits representing color of pixel, 4 bits for R
 // general variables
 logic [9:0] ball_xv = 3;
 logic [9:0] ball_yv = 1;
-
+logic [9:0] player_1_paddle_yv = 3;
+logic [9:0] player_2_paddle_yv = 3;
 										
 // Draw the player one paddle
 wire [9:0] player_1_paddle_width = 10;
@@ -122,9 +125,17 @@ always_ff @(posedge CLOCK_50)
 			if (ball_x_location > 640 || ball_x_location < 0) begin
 				ball_xv = -ball_xv;
 			end
-			i <= 0;
-			ball_y_location_logic = ball_y_location_logic + ball_yv;
-			ball_x_location_logic = ball_x_location_logic + ball_xv;
+			
+			if (PushButton[2]) player_1_paddle_y_location_logic <= player_1_paddle_y_location_logic - player_1_paddle_yv;
+			else player_1_paddle_y_location_logic <= player_1_paddle_y_location_logic + player_1_paddle_yv;
+			
+			
+			if (PushButton[0]) player_2_paddle_y_location_logic <= player_2_paddle_y_location_logic - player_2_paddle_yv;
+			else player_2_paddle_y_location_logic <= player_2_paddle_y_location_logic + player_2_paddle_yv;
+			
+			i <= 0;	
+			ball_y_location_logic <= ball_y_location_logic + ball_yv;
+			ball_x_location_logic <= ball_x_location_logic + ball_xv;
 		end
 	end
 	
