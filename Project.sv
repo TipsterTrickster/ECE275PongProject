@@ -126,13 +126,14 @@ always_ff @(posedge CLOCK_50)
 		
 		i = i + 1;
 		
+		//Defines the functions of the Push Buttons and evaluates various cases
 		if (i == 307200) begin
-			if (reset == 1) begin
-				ball_y_location_logic = 240;
-				ball_x_location_logic = 320;
-				ball_xv = 0;
-				ball_yv = 0;
-				
+				if (reset == 1) begin
+					ball_y_location_logic = 240;
+					ball_x_location_logic = 320;
+					ball_xv = 0;
+					ball_yv = 0;
+			
 				if(!PushButton[2] && j > 500) begin
 					j = 0;
 					reset = 0;
@@ -148,7 +149,7 @@ always_ff @(posedge CLOCK_50)
 				end
 			end
 
-			
+			//Describes the boundary cases for the ball to bounce once it hits the top and bottom edges of the screen or the paddles in x and y
 			if (ball_x_location + ball_width > 630 || ball_x_location < 10) begin
 			
 				reset = 1;
@@ -168,8 +169,12 @@ always_ff @(posedge CLOCK_50)
 				ball_xv = -ball_xv;
 			end
 
-			if (ball_y_location > 480 || ball_y_location < 0) ball_yv = -ball_yv;
+			if (ball_y_location > 480 || ball_y_location < 0) begin 
+				
+				ball_yv = -ball_yv;
+			end
 			
+			// Defines the boundary conditions and actions for the player_1 and player_2 paddles
 			if (!PushButton[2] && player_1_paddle_y_location + player_1_paddle_height < 479) begin 
 			
 				player_1_paddle_y_location_logic = player_1_paddle_y_location_logic + player_1_paddle_yv;
@@ -191,7 +196,7 @@ always_ff @(posedge CLOCK_50)
 			end
 			
 			
-			
+			//Sets the respective x and y velocities of the ball
 			ball_y_location_logic = ball_y_location_logic + ball_yv;
 			ball_x_location_logic = ball_x_location_logic + ball_xv;
 			
