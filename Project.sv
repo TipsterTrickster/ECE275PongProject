@@ -2,7 +2,7 @@
 `include "./modules/make_box.sv"
 `include "./modules/BCD_Display.sv"
 `include "./modules/binaryToBCD.sv"
-
+`include "./testslowclock.sv"
 
 module Project(CLOCK_50, PushButton, SW,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
@@ -132,37 +132,63 @@ always_ff @(posedge CLOCK_50)
 				ball_x_location_logic = 320;
 				ball_xv = 0;
 				ball_yv = 0;
+				
 				if(!PushButton[2] && j > 500) begin
 					j = 0;
 					reset = 0;
 					ball_xv = 3;
 					ball_yv = -1;
 				end
+				
 				else if(!PushButton[0] && j > 500) begin
+					j = 0;
 					reset = 0;
 					ball_xv = -3;
 					ball_yv = -1;
 				end
 			end
+
 			
+			if (ball_x_location + ball_width > 630 || ball_x_location < 10) begin
 			
+				reset = 1;
+			end
 			
-			if (ball_x_location + ball_width > 630 || ball_x_location < 10) reset = 1;
 			else if (ball_y_location < player_1_paddle_y_location + player_1_paddle_height &&
 						ball_y_location + ball_height > player_1_paddle_y_location && 
-						(ball_x_location + ball_width < 30)) ball_xv = -ball_xv;
+						(ball_x_location + ball_width < 30))begin
+						
+				ball_xv = -ball_xv;
+			end
+			
 			else if (ball_y_location < player_2_paddle_y_location + player_2_paddle_height &&
 						ball_y_location + ball_height > player_2_paddle_y_location && 
-						(ball_x_location + ball_width > 610)) ball_xv = -ball_xv;
-			
+						(ball_x_location + ball_width > 610)) begin
+						
+				ball_xv = -ball_xv;
+			end
 
 			if (ball_y_location > 480 || ball_y_location < 0) ball_yv = -ball_yv;
 			
-			if (!PushButton[2] && player_1_paddle_y_location + player_1_paddle_height < 479) player_1_paddle_y_location_logic = player_1_paddle_y_location_logic + player_1_paddle_yv;
-			else if (player_1_paddle_y_location > 1) player_1_paddle_y_location_logic = player_1_paddle_y_location_logic - player_1_paddle_yv;
+			if (!PushButton[2] && player_1_paddle_y_location + player_1_paddle_height < 479) begin 
 			
-			if (!PushButton[0] && player_2_paddle_y_location + player_2_paddle_height < 479) player_2_paddle_y_location_logic = player_2_paddle_y_location_logic + player_2_paddle_yv;
-			else if (player_2_paddle_y_location > 1) player_2_paddle_y_location_logic = player_2_paddle_y_location_logic - player_2_paddle_yv;
+				player_1_paddle_y_location_logic = player_1_paddle_y_location_logic + player_1_paddle_yv;
+			end
+			
+			else if (player_1_paddle_y_location > 1) begin
+			
+				player_1_paddle_y_location_logic = player_1_paddle_y_location_logic - player_1_paddle_yv;
+			end
+			
+			if (!PushButton[0] && player_2_paddle_y_location + player_2_paddle_height < 479) begin
+			
+				player_2_paddle_y_location_logic = player_2_paddle_y_location_logic + player_2_paddle_yv;
+			end
+			
+			else if (player_2_paddle_y_location > 1) begin
+				
+				player_2_paddle_y_location_logic = player_2_paddle_y_location_logic - player_2_paddle_yv;
+			end
 			
 			
 			
