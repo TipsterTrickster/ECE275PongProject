@@ -8,7 +8,7 @@ module slowclock(input wire fastclk,
    always_ff @(posedge fastclk or posedge reset)
      begin
         if (reset) begin
-           count <= 3'b0;
+           count <= 24'b0;
         end else begin
            count <= d;
         end
@@ -16,12 +16,12 @@ module slowclock(input wire fastclk,
 
 
    // input + current state -> ff input block
-   assign d = (count == 3'b011) ? 3'b000 : count + 3'b001;
+  assign d = (count == 24'd5000000) ? 24'b000 : count + 24'b001;
 
    // current state -> output block
    always_comb
      begin
-        if (count == 3'b000)
+       if (count == 24'b000)
           assign slowclk = 1'b1;
         else
           assign slowclk = 1'b0;
