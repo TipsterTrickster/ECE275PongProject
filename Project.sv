@@ -4,13 +4,14 @@
 `include "./modules/binaryToBCD.sv"
 `include "./testslowclock.sv"
 
-module Project(CLOCK_50, PushButton, SW,
+module Project(CLOCK_50, PushButton, HEX1_D, HEX0_D,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
 
 input	logic	CLOCK_50;
 
 input logic [2:0] PushButton;
-input logic [9:0] SW;
+output logic [5:0] HEX1_D;
+output logic [5:0] HEX0_D;
 
 
 output	logic	[3:0]		VGA_R;		//Output Red
@@ -36,6 +37,8 @@ logic [9:0] ball_xv = 0;
 logic [9:0] ball_yv = 0;
 logic [9:0] player_1_paddle_yv = 3;
 logic [9:0] player_2_paddle_yv = 3;
+logic [2:0] player_1_score = 0;
+logic [2:0] player_2_score = 0;
 logic reset = 1;
 										
 // Draw the player one paddle
@@ -113,6 +116,9 @@ make_box draw_ball(
 	.box(ball)
 );
 
+BCD_Display p1_score (player_1_score, HEX0_D);
+BCD_Display p2_score (player_2_score, HEX1_D);
+
 logic [19:0] i = 0;
 logic [14:0] j = 0;
 
@@ -133,6 +139,7 @@ always_ff @(posedge CLOCK_50)
 					ball_x_location_logic = 320;
 					ball_xv = 0;
 					ball_yv = 0;
+					
 			
 				if(!PushButton[2] && j > 500) begin
 					j = 0;
@@ -166,9 +173,16 @@ always_ff @(posedge CLOCK_50)
 			end
 
 			//Describes the boundary cases for the ball to bounce once it hits the top and bottom edges of the screen or the paddles in x and y
-			if (ball_x_location + ball_width > 630 || ball_x_location < 10) begin
+			if (ball_x_location < 10) begin
 				j = 0;
 				reset = 1;
+				player_2_score = player_2_score +1;
+			end
+			if (ball_x_location + ball_width > 630) begin
+				j = 0;
+				reset = 1;
+				player_1_score = player_1_score +1;
+			
 			end
 			
 			else if (ball_y_location < player_1_paddle_y_location + player_1_paddle_height &&
