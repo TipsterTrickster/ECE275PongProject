@@ -16,6 +16,20 @@ set_location_assignment PIN_G21 -to CLOCK_50
 set_location_assignment PIN_H2 -to PushButton[0]
 set_location_assignment PIN_G3 -to PushButton[1]
 set_location_assignment PIN_F1 -to PushButton[2]
+set_location_assignment PIN_E11 -to HEX0_D[0]
+set_location_assignment PIN_F11 -to HEX0_D[1]
+set_location_assignment PIN_H12 -to HEX0_D[2]
+set_location_assignment PIN_H13 -to HEX0_D[3]
+set_location_assignment PIN_G12 -to HEX0_D[4]
+set_location_assignment PIN_F12 -to HEX0_D[5]
+set_location_assignment PIN_F13 -to HEX0_D[6]
+set_location_assignment PIN_A13 -to HEX1_D[0]
+set_location_assignment PIN_B13 -to HEX1_D[1]
+set_location_assignment PIN_C13 -to HEX1_D[2]
+set_location_assignment PIN_A14 -to HEX1_D[3]
+set_location_assignment PIN_B14 -to HEX1_D[4]
+set_location_assignment PIN_E14 -to HEX1_D[5]
+set_location_assignment PIN_A15 -to HEX1_D[6]
 set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
