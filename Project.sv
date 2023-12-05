@@ -10,8 +10,8 @@ module Project(CLOCK_50, PushButton, HEX1_D, HEX0_D,
 input	logic	CLOCK_50;
 
 input logic [2:0] PushButton;
-output logic [5:0] HEX1_D;
-output logic [5:0] HEX0_D;
+output logic [6:0] HEX1_D;
+output logic [6:0] HEX0_D;
 
 
 output	logic	[3:0]		VGA_R;		//Output Red
@@ -116,8 +116,8 @@ make_box draw_ball(
 	.box(ball)
 );
 
-BCD_Display p1_score (player_1_score, HEX0_D);
-BCD_Display p2_score (player_2_score, HEX1_D);
+BCD_Display p1_score (player_1_score, HEX1_D);
+BCD_Display p2_score (player_2_score, HEX0_D);
 
 logic [19:0] i = 0;
 logic [14:0] j = 0;
@@ -158,7 +158,7 @@ always_ff @(posedge CLOCK_50)
 				
 			end
 			
-			//Increase the balls speed in the x direction
+			//Increase the balls speed in the x-direction
 			
 			 if (j > 2000 && ((ball_x_location == player_1_paddle_x_location + player_1_paddle_width) || (ball_x_location == player_2_paddle_x_location)))begin 
 			   j = 0;
@@ -171,18 +171,22 @@ always_ff @(posedge CLOCK_50)
 					ball_xv = ball_xv - 1;
 				end
 			end
-
-			//Describes the boundary cases for the ball to bounce once it hits the top and bottom edges of the screen or the paddles in x and y
-			if (ball_x_location < 10) begin
-				j = 0;
-				reset = 1;
-				player_2_score = player_2_score +1;
-			end
-			if (ball_x_location + ball_width > 630) begin
-				j = 0;
-				reset = 1;
-				player_1_score = player_1_score +1;
 			
+			//Describes the boundary cases for the ball to bounce once it hits the top and bottom edges of the screen or the paddles in x and y
+			if (ball_x_location == 10) begin
+				player_2_score = player_2_score + 3'd1;
+				j = 0;
+				reset = 1;
+			end
+			if (ball_x_location + ball_width == 630) begin
+				player_1_score = player_1_score + 3'd1;
+				j = 0;
+				reset = 1;
+			end
+			if ((player_1_score==7 || player_2_score==7)&& j>500) begin
+				j=0;
+				player_1_score=0;
+				player_2_score=0;
 			end
 			
 			else if (ball_y_location < player_1_paddle_y_location + player_1_paddle_height &&
