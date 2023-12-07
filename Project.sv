@@ -3,6 +3,7 @@
 `include "./modules/BCD_Display.sv"
 `include "./modules/binaryToBCD.sv"
 `include "./testslowclock.sv"
+`include "./modules/ball_speed_inc.sv"
 
 module Project(CLOCK_50, PushButton, HEX1_D, HEX0_D,
                 VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS);
@@ -66,6 +67,7 @@ make_box draw_player_1_paddle(
 	.box(player_1_paddle)
 );
 
+// Draw the player two paddle
 wire [9:0] player_2_paddle_width = 10;
 wire [9:0] player_2_paddle_height = 50;
 logic [9:0] player_2_paddle_x_location_logic = 610;
@@ -79,7 +81,6 @@ logic player_2_paddle;
 assign player_2_paddle_x_location = player_2_paddle_x_location_logic;
 assign player_2_paddle_y_location = player_2_paddle_y_location_logic;
 
-
 make_box draw_player_2_paddle(
 	.X_pix(X_pix),
 	.Y_pix(Y_pix),
@@ -91,6 +92,7 @@ make_box draw_player_2_paddle(
 	.box(player_2_paddle)
 );
 
+// Draw the ball
 wire [9:0] ball_width = 8;
 wire [9:0] ball_height = 8;
 logic [9:0] ball_x_location_logic = 320;
@@ -116,9 +118,21 @@ make_box draw_ball(
 	.box(ball)
 );
 
-BCD_Display p1_score (player_1_score, HEX1_D);
-BCD_Display p2_score (player_2_score, HEX0_D);
+//Other Module Instantiations
+BCD_Display p1_score (player_1_score, 
+	HEX1_D);
+	
+BCD_Display p2_score (player_2_score, 
+	HEX0_D);
 
+/*ball_speed_inc speed (.player_1_paddle_x_location(player_1_paddle_x_location), 
+	.player_1_paddle_width(player_1_paddle_width), 
+	.ball_x_location(ball_x_location), 
+	.player_2_paddle_x_location(player_2_paddle_x_location), 
+	.ball_xvv(ball_xv),
+	.ball_xv(ball_xv));*/
+
+//Counter Variables
 logic [19:0] i = 0;
 logic [14:0] j = 0;
 
